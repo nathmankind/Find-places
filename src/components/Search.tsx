@@ -20,7 +20,7 @@ const SearchForm: React.FC = () => {
   const [places, setPlaces] = useState<Array<any>>([{}]);
   //   const key = "AIzaSyCOSmoYctP_DoP5bf7hVGGTnehznWbHXB8"; My account key
 
-  const key = "AIzaSyBoLPRkasVLr8uSZbZkgQZo8d_XbIKL0Us";
+  const key = "";
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(function (position) {
@@ -50,7 +50,6 @@ const SearchForm: React.FC = () => {
     console.log(searchUrl);
     getItem(searchUrl)
       .then((res) => {
-        // console.log(res.results);
         setPlaces(res.results);
         console.log(places);
       })
