@@ -45,6 +45,8 @@
   padding: 4px 12px 4px 30px;
   margin-bottom: 22px;
   text-align: left;
+  display: flex;
+  flex-wrap: wrap;
 }
 .place_name {
   font-size: 20px;
@@ -54,4 +56,20 @@
 }
 ul {
   padding: 0;
+}
+.info {
+  width: 80%;
+}
+.icon img {
+  width: 75%;
+  padding-top: 6px;
+}
+@media only screen and (max-width: 768px) {
+  .place_list {
+    width: 100%;
+    padding: 4px 12px;
+  }
+  .ant-layout-content {
+    padding: 0px 10px !important;
+  }
 }

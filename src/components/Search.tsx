@@ -65,7 +65,7 @@ const SearchForm: React.FC = () => {
       <div className="place_list" key={place.id}>
         <div className="info">
           <p className="place_name">
-            {name} -
+            {name}
             {/* {open.open_now == true ? (
               <p>Currently open</p>
             ) : (
@@ -74,7 +74,7 @@ const SearchForm: React.FC = () => {
           </p>
           <p className="place_address">{address}</p>
         </div>
-        <div className="img">
+        <div className="icon">
           <img src={place.icon} alt="icon" />
         </div>
       </div>
@@ -125,7 +125,6 @@ const SearchForm: React.FC = () => {
                 <p> Loading...</p>
               )}
             </Col>
-            <Col xs={2} sm={4} md={6} lg={8} xl={10}></Col>
           </Row>
         </div>
       </Content>
