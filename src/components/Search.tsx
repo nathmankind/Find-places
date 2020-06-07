@@ -60,21 +60,38 @@ const SearchForm: React.FC = () => {
   const placeList = places.map((place) => {
     const name = place.name;
     const address = place.formatted_address;
+    const open = place.opening_hours;
     return (
       <div className="place_list" key={place.id}>
-        <p className="place_name">{name}</p>
-        <p className="place_address">{address}</p>
+        <div className="info">
+          <p className="place_name">
+            {name} -
+            {/* {open.open_now == true ? (
+              <p>Currently open</p>
+            ) : (
+              <p>Currently closed</p>
+            )} */}
+          </p>
+          <p className="place_address">{address}</p>
+        </div>
+        <div className="img">
+          <img src={place.icon} alt="icon" />
+        </div>
       </div>
     );
   });
   return (
     <div>
       <div>
-        <p>Search For hospitals and medical & health care center around you</p>
+        <p style={{ fontSize: 18, padding: 12 }}>
+          Search For hospitals and medical & health care center around you
+        </p>
       </div>
       <Content style={{ padding: "0 50px" }}>
         <Row>
           <Col xs={24} sm={24} md={8} lg={8} xl={8}>
+            <p>Select your search radius</p>
+
             <Select
               value={radius}
               style={{ width: 120 }}
@@ -90,6 +107,7 @@ const SearchForm: React.FC = () => {
             </Select>
           </Col>
           <Col xs={24} sm={24} md={16} lg={16} xl={16}>
+            <p>Enter place to be found here...</p>
             <Input
               placeholder="Search here"
               value={query}
@@ -98,10 +116,10 @@ const SearchForm: React.FC = () => {
           </Col>
         </Row>
         <div className="results-section">
-          <p>Results</p>
+          <p style={{ padding: 12, fontSize: 24 }}>Results</p>
           <Row>
             <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-              {places != [] ? (
+              {places !== [] ? (
                 <div>{<ul>{placeList}</ul>}</div>
               ) : (
                 <p> Loading...</p>
