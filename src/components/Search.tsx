@@ -18,7 +18,6 @@ const SearchForm: React.FC = () => {
   const [latitude, setLatitude] = useState<number | null>(0);
   const [longitude, setLongitude] = useState<number | null>(0);
   const [places, setPlaces] = useState<Array<any>>([{}]);
-  //   const key = "AIzaSyCOSmoYctP_DoP5bf7hVGGTnehznWbHXB8"; My account key
 
   const key = "";
 
