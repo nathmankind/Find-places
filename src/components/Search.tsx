@@ -111,12 +111,12 @@ const SearchForm: React.FC = () => {
     const open = place.opening_hours;
     return (
       <div className="place_list" key={place.id}>
+        <div className="icon">
+          <img src={place.icon} alt="icon" />
+        </div>
         <div className="info">
           <p className="place_name">{name}</p>
           <p className="place_address">{address}</p>
-        </div>
-        <div className="icon">
-          <img src={place.icon} alt="icon" />
         </div>
       </div>
     );
