@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Row, Col, Layout, Select, Input } from "antd";
+import React, { useState, useEffect, useRef, ReactElement } from "react";
+import { Row, Col, Layout, Select, Input, Button, Spin, Space } from "antd";
+import { Link, RouteComponentProps, useLocation } from "react-router-dom";
+import { StaticContext } from "react-router";
 import { getItem } from "./../Service/service";
+import firebase from "./../Service/firebase";
+import _ from "lodash";
 
 const style = { background: "#0092ff", padding: "8px 0" };
 const { Content } = Layout;
@@ -8,33 +12,77 @@ const { Option } = Select;
 
 type FormElem = React.FormEvent<HTMLFormElement>;
 
+type LocationState = {
+  from: Location;
+};
+
+type Props = RouteComponentProps<
+  {},
+  StaticContext,
+  { from: { pathname: string } }
+>;
+
 interface ITestState {
   selectedValue: string;
 }
 
 const SearchForm: React.FC = () => {
   const [query, setQuery] = useState<string>("");
-  const [radius, setRadius] = useState<string>("500");
+  const location = useLocation();
+  const [radius, setRadius] = useState<string>("");
   const [latitude, setLatitude] = useState<number | null>(0);
   const [longitude, setLongitude] = useState<number | null>(0);
   const [places, setPlaces] = useState<Array<any>>([{}]);
+  const [searches, setSearches] = useState<Array<any>>([]); // for user searches
 
-  const key = "";
+  const key = "AIzaSyBoLPRkasVLr8uSZbZkgQZo8d_XbIKL0Us";
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(function (position) {
+    navigator.geolocation.getCurrentPosition((position) => {
       let getLatitude = position.coords.latitude;
       let getLongitude = position.coords.longitude;
       setLatitude(getLatitude);
       setLongitude(getLongitude);
       console.log(`latitude: ${getLatitude}, longitude: ${getLongitude}`);
+      sessionStorage.setItem("latitude", JSON.stringify(getLatitude));
+      sessionStorage.setItem("longitude", JSON.stringify(getLongitude));
+      const historyQuery = location.state as any;
+      if (historyQuery) {
+        setQuery(historyQuery.query);
+        setLatitude(getLatitude);
+        setLongitude(getLongitude);
+        fetchSearchResults(historyQuery.query.split(" ").join("+"));
+        console.log(historyQuery.query.split(" ").join("+"));
+      }
     });
   }, []);
+
+  //function to get final search query after 1000ms and add query to firebase
+  const delayedSearchResult = useRef(
+    _.debounce((q: string) => {
+      if (q !== "") {
+        const db = firebase.firestore();
+        db.collection("searchQueries").add({ q }); //Adds search query to firebase
+        setSearches((searches) => [...searches, q]);
+      } else {
+        console.log(null);
+      }
+      // q != "" ? setSearches((searches) => [...searches, q]) : console.log(null);
+    }, 1000)
+  ).current;
 
   const handleQuery = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
     setQuery(e.target.value as string);
+    console.log(e.target.value);
+    delayedSearchResult(e.target.value);
+
     fetchSearchResults(e.target.value.split(" ").join("+"));
+  };
+
+  const onListSelect = (list: string) => {
+    console.log(list);
+    setQuery(list);
   };
 
   const handleRadius = (e: any) => {
@@ -43,9 +91,11 @@ const SearchForm: React.FC = () => {
   };
 
   const fetchSearchResults = (query: string) => {
-    console.log(query);
+    let lat = sessionStorage.getItem("latitude");
+    let long = sessionStorage.getItem("longitude");
+    console.log(lat, long);
     const proxy = "https://cors-anywhere.herokuapp.com/";
-    const searchUrl = `${proxy}https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&location=${latitude},${longitude}&radius=${radius}&key=${key}`;
+    const searchUrl = `${proxy}https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&location=${lat},${long}&radius=${radius}&key=${key}`;
     console.log(searchUrl);
     getItem(searchUrl)
       .then((res) => {
@@ -62,14 +112,7 @@ const SearchForm: React.FC = () => {
     return (
       <div className="place_list" key={place.id}>
         <div className="info">
-          <p className="place_name">
-            {name}
-            {/* {open.open_now == true ? (
-              <p>Currently open</p>
-            ) : (
-              <p>Currently closed</p>
-            )} */}
-          </p>
+          <p className="place_name">{name}</p>
           <p className="place_address">{address}</p>
         </div>
         <div className="icon">
@@ -80,21 +123,31 @@ const SearchForm: React.FC = () => {
   });
   return (
     <div>
-      <div>
-        <p style={{ fontSize: 18, padding: 12 }}>
-          Search For hospitals and medical & health care center around you
-        </p>
-      </div>
       <Content style={{ padding: "0 50px" }}>
-        <Row>
+        <Row style={{ justifyContent: "center", padding: 24 }}>
+          <Col>
+            <div>
+              <p
+                style={{
+                  fontSize: 32,
+                  color: "#001529",
+                }}
+              >
+                Start Your Search
+              </p>
+            </div>
+          </Col>
+        </Row>
+        <Row style={{ width: "75%", margin: "auto" }}>
           <Col xs={24} sm={24} md={8} lg={8} xl={8}>
-            <p>Select your search radius</p>
-
             <Select
               value={radius}
-              style={{ width: 120 }}
+              style={{ width: "80%", borderRadius: "20px" }}
               onChange={handleRadius}
             >
+              <Option value="" disabled selected>
+                Select Search Radius
+              </Option>
               <Option value="500">500</Option>
               <Option value="1000">1000</Option>
               <Option value="5000">5000</Option>
@@ -105,22 +158,25 @@ const SearchForm: React.FC = () => {
             </Select>
           </Col>
           <Col xs={24} sm={24} md={16} lg={16} xl={16}>
-            <p>Enter place to be found here...</p>
             <Input
-              placeholder="Search here"
+              placeholder="Search for 'hospitals', 'health centers', 'medical fitness center' "
               value={query}
               onChange={handleQuery}
             />
           </Col>
         </Row>
         <div className="results-section">
-          <p style={{ padding: 12, fontSize: 24 }}>Results</p>
+          <p style={{ padding: 16, fontSize: 24 }}>Results</p>
           <Row>
             <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-              {places !== [] ? (
+              {places !== [{}] ? (
                 <div>{<ul>{placeList}</ul>}</div>
               ) : (
-                <p> Loading...</p>
+                <div>
+                  <Space size="middle">
+                    <Spin size="large" />
+                  </Space>
+                </div>
               )}
             </Col>
           </Row>
