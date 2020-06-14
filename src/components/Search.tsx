@@ -3,7 +3,8 @@ import { Row, Col, Layout, Select, Input, Button, Spin, Space } from "antd";
 import { Link, RouteComponentProps, useLocation } from "react-router-dom";
 import { StaticContext } from "react-router";
 import { getItem } from "./../Service/service";
-import firebase from "./../Service/firebase";
+import { firestore, auth } from "./../Service/firebase";
+import firebase from "firebase";
 import _ from "lodash";
 
 const style = { background: "#0092ff", padding: "8px 0" };
@@ -51,7 +52,7 @@ const SearchForm: React.FC = () => {
         setQuery(historyQuery.query);
         setLatitude(getLatitude);
         setLongitude(getLongitude);
-        fetchSearchResults(historyQuery.query.split(" ").join("+"));
+        // fetchSearchResults(historyQuery.query.split(" ").join("+"));
         console.log(historyQuery.query.split(" ").join("+"));
       }
     });
@@ -61,8 +62,13 @@ const SearchForm: React.FC = () => {
   const delayedSearchResult = useRef(
     _.debounce((q: string) => {
       if (q !== "") {
-        const db = firebase.firestore();
-        db.collection("searchQueries").add({ q }); //Adds search query to firebase
+        const db = firestore;
+        const user: any = auth.currentUser;
+        const user_uid = user.uid;
+        const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
+        db.collection("users")
+          .doc(user_uid)
+          .update({ search: arrayUnion(q as string) }); //Adds search query to firebase
         setSearches((searches) => [...searches, q]);
       } else {
         console.log(null);
@@ -77,7 +83,7 @@ const SearchForm: React.FC = () => {
     console.log(e.target.value);
     delayedSearchResult(e.target.value);
 
-    fetchSearchResults(e.target.value.split(" ").join("+"));
+    // fetchSearchResults(e.target.value.split(" ").join("+"));
   };
 
   const onListSelect = (list: string) => {

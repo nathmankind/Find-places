@@ -2,7 +2,8 @@ import React from "react";
 import SearchForm from "./components/Search";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import "./App.less";
-import { Row, Col, Layout, Menu } from "antd";
+import { Row, Col, Layout, Menu, Button } from "antd";
+import { auth } from "./Service/firebase";
 const { Content, Header, Footer } = Layout;
 
 const Home: React.FC = () => {
@@ -16,6 +17,15 @@ const Home: React.FC = () => {
           </Menu.Item>
           <Menu.Item key="2" style={{ float: "right", fontSize: "1.25em" }}>
             <Link to="/history">Search History</Link>
+          </Menu.Item>
+          <Menu.Item key="2" style={{ float: "right", fontSize: "1.25em" }}>
+            <Button
+              onClick={() => {
+                auth.signOut();
+              }}
+            >
+              Logout
+            </Button>
           </Menu.Item>
         </Menu>
       </Header>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, Redirect } from "react-router-dom";
-import firebase from "./../Service/firebase";
+import { firestore } from "./../Service/firebase";
 import { Row, Col, List, Layout, Menu, Spin, Space } from "antd";
 const { Content, Header, Footer } = Layout;
 
@@ -13,7 +13,7 @@ const History: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const db = firebase.firestore();
+      const db = firestore;
       db.collection("searchQueries").onSnapshot((data) => {
         setQsearhes(data.docs);
         console.log(data.docs);
