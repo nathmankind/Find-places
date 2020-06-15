@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link, Redirect } from "react-router-dom";
-import { firestore } from "./../Service/firebase";
-import { Row, Col, List, Layout, Menu, Spin, Space } from "antd";
-const { Content, Header, Footer } = Layout;
-
-interface Props {
-  fn: (bob: string) => string;
-}
+import { Link} from "react-router-dom";
+import { firestore, auth } from "./../Service/firebase";
+import { Row, Col, List, Layout, Spin, Space } from "antd";
+import Navbar from "./Navbar";
+const { Content, } = Layout;
 
 const History: React.FC = () => {
   const [qsearches, setQsearhes] = useState<Array<any>>([]);
@@ -14,13 +11,18 @@ const History: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       const db = firestore;
-      db.collection("searchQueries").onSnapshot((data) => {
-        setQsearhes(data.docs);
-        console.log(data.docs);
-        data.docs.map((doc) => {
-          console.log(doc.data().q);
+      const user: any = auth.currentUser;
+      const user_id = user.uid;
+      const searchR = db
+        .collection("users")
+        .doc(user_id)
+        .onSnapshot((data) => {
+          console.log(data.data());
+          const searchResults: any = data.data();
+          console.log(searchResults.email);
+          console.log(searchResults.search);
+          setQsearhes(searchResults.search);
         });
-      });
     };
     fetchData();
   }, []);
@@ -29,20 +31,17 @@ const History: React.FC = () => {
     return (
       <div>
         <li
-          key={list.data().id}
-          // onClick={() =>
-          //   sessionStorage.setItem("queryClick", JSON.stringify(list.data().q))
-          // }
+          key={list}
         >
           <Link
             to={{
               pathname: "/",
               state: {
-                query: list.data().q,
+                query: list,
               },
             }}
           >
-            {list.data().q}
+            {list}
           </Link>
         </li>
         <hr />
@@ -53,17 +52,7 @@ const History: React.FC = () => {
   return (
     <div>
       <Layout>
-        <Header>
-          <div className="logo" />
-          <Menu theme="dark" mode="horizontal">
-            <Menu.Item key="1" style={{ fontSize: "1.4em" }}>
-              <Link to="/">Find Hospitals</Link>
-            </Menu.Item>
-            <Menu.Item key="2" style={{ float: "right", fontSize: "1.25em" }}>
-              <Link to="/history">Search History</Link>
-            </Menu.Item>
-          </Menu>
-        </Header>
+        <Navbar />
       </Layout>
       <Content style={{ padding: "0 50px", width: "90%", margin: "auto" }}>
         <Row style={{ padding: 24, fontSize: 32 }}>

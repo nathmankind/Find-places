@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Redirect } from "react-router-dom";
-import { Form, Input, Select, Button, AutoComplete } from "antd";
-import { QuestionCircleOutlined } from "@ant-design/icons";
-import { auth, generateUserDocument } from "../Service/firebase";
+import { Redirect, Link } from "react-router-dom";
+import { Form, Input, Layout, Select, Button, AutoComplete } from "antd";
+import { auth } from "../Service/firebase";
 import { firestore } from "./../Service/firebase";
 import Home from "./../Home";
+import Navbar from "./Navbar";
+const { Content } = Layout;
 
 const SignUp: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -48,10 +49,6 @@ const SignUp: React.FC = () => {
     setPassword(e.target.value as string);
     console.log(e.target.value);
   };
-  //   const newHistory = () => {
-  //       const newUserHistory = []
-  //       setHistory(newUserHistory)
-  //   }
 
   const signupUser = (
     e: React.MouseEvent<HTMLElement, MouseEvent>,
@@ -67,66 +64,74 @@ const SignUp: React.FC = () => {
     });
     auth.onAuthStateChanged((user_available) => {
       user_available ? setCurrentUser(user_available) : setCurrentUser(null);
-      return <Redirect to="/" />
+      // return <Redirect to="/" />;
     });
-    ;
+    if (currentUser) {
+      window.location.replace("/");
+    }
   };
 
   return (
     <div>
-      <Form
-        {...formItemLayout}
-        form={form}
-        name="register"
-        initialValues={{
-          residence: ["zhejiang", "hangzhou", "xihu"],
-          prefix: "86",
-        }}
-        scrollToFirstError
-      >
-        <Form.Item
-          name="email"
-          label="E-mail"
-          rules={[
-            {
-              type: "email",
-              message: "The input is not valid E-mail!",
-            },
-            {
-              required: true,
-              message: "Please input your E-mail!",
-            },
-          ]}
+      <Navbar />
+      <Content style={{ padding: "0 50px" }}>
+        <Form
+          {...formItemLayout}
+          form={form}
+          name="register"
+          initialValues={{
+            residence: ["zhejiang", "hangzhou", "xihu"],
+            prefix: "86",
+          }}
+          scrollToFirstError
         >
-          <Input onChange={onEmailHandler} />
-        </Form.Item>
-
-        <Form.Item
-          name="password"
-          label="Password"
-          rules={[
-            {
-              required: true,
-              message: "Please input your password!",
-            },
-          ]}
-          hasFeedback
-        >
-          <Input.Password onChange={onPasswordHandler} />
-        </Form.Item>
-
-        <Form.Item {...tailFormItemLayout}>
-          <Button
-            onClick={(e) => {
-              signupUser(e, email, password);
-            }}
-            type="primary"
-            htmlType="submit"
+          <Form.Item
+            name="email"
+            label="E-mail"
+            rules={[
+              {
+                type: "email",
+                message: "The input is not valid E-mail!",
+              },
+              {
+                required: true,
+                message: "Please input your E-mail!",
+              },
+            ]}
           >
-            Sign Up
-          </Button>
-        </Form.Item>
-      </Form>
+            <Input onChange={onEmailHandler} />
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            label="Password"
+            rules={[
+              {
+                required: true,
+                message: "Please input your password!",
+              },
+            ]}
+            hasFeedback
+          >
+            <Input.Password onChange={onPasswordHandler} />
+          </Form.Item>
+
+          <Form.Item {...tailFormItemLayout}>
+            <Button
+              onClick={(e) => {
+                signupUser(e, email, password);
+              }}
+              type="primary"
+              htmlType="submit"
+            >
+              Sign Up
+            </Button>
+          </Form.Item>
+        </Form>
+        <p>
+          Already have an account? login <Link to="/login">Here</Link>
+        </p>
+      </Content>
     </div>
   );
 };

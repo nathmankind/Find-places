@@ -3,7 +3,6 @@ import "./App.less";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import History from "./components/History";
 import Home from "./Home";
-import UserProvider from "./Provider/UserProvider";
 import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
 import { auth } from "./Service/firebase";
@@ -33,8 +32,8 @@ function App() {
       ) : (
         <Router>
           <Switch>
-            <Route path="/signup" exact component={SignUp} />
-            <Route path="/" exact component={SignIn} />
+            <Route path="/signup" component={SignUp} />
+            <Route path="/" component={SignIn} />
           </Switch>
         </Router>
       )}

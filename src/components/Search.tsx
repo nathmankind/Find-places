@@ -6,26 +6,13 @@ import { getItem } from "./../Service/service";
 import { firestore, auth } from "./../Service/firebase";
 import firebase from "firebase";
 import _ from "lodash";
+import Navbar from './Navbar';
 
 const style = { background: "#0092ff", padding: "8px 0" };
 const { Content } = Layout;
 const { Option } = Select;
 
-type FormElem = React.FormEvent<HTMLFormElement>;
 
-type LocationState = {
-  from: Location;
-};
-
-type Props = RouteComponentProps<
-  {},
-  StaticContext,
-  { from: { pathname: string } }
->;
-
-interface ITestState {
-  selectedValue: string;
-}
 
 const SearchForm: React.FC = () => {
   const [query, setQuery] = useState<string>("");
@@ -73,7 +60,6 @@ const SearchForm: React.FC = () => {
       } else {
         console.log(null);
       }
-      // q != "" ? setSearches((searches) => [...searches, q]) : console.log(null);
     }, 1000)
   ).current;
 
@@ -86,16 +72,14 @@ const SearchForm: React.FC = () => {
     // fetchSearchResults(e.target.value.split(" ").join("+"));
   };
 
-  const onListSelect = (list: string) => {
-    console.log(list);
-    setQuery(list);
-  };
 
   const handleRadius = (e: any) => {
     setRadius(e);
     console.log(e);
   };
 
+
+  //Fetch search results
   const fetchSearchResults = (query: string) => {
     let lat = sessionStorage.getItem("latitude");
     let long = sessionStorage.getItem("longitude");
@@ -114,7 +98,6 @@ const SearchForm: React.FC = () => {
   const placeList = places.map((place) => {
     const name = place.name;
     const address = place.formatted_address;
-    const open = place.opening_hours;
     return (
       <div className="place_list" key={place.id}>
         <div className="icon">
@@ -129,6 +112,7 @@ const SearchForm: React.FC = () => {
   });
   return (
     <div>
+      <Navbar/>
       <Content style={{ padding: "0 50px" }}>
         <Row style={{ justifyContent: "center", padding: 24 }}>
           <Col>
