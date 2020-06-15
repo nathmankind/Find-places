@@ -21,7 +21,7 @@ const SearchForm: React.FC = () => {
   const [places, setPlaces] = useState<Array<any>>([{}]);
   const [searches, setSearches] = useState<Array<any>>([]); // for user searches
 
-  const key = "AIzaSyBoLPRkasVLr8uSZbZkgQZo8d_XbIKL0Us";
+  const key = "";
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
