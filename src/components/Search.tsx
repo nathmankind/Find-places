@@ -6,13 +6,11 @@ import { getItem } from "./../Service/service";
 import { firestore, auth } from "./../Service/firebase";
 import firebase from "firebase";
 import _ from "lodash";
-import Navbar from './Navbar';
+import Navbar from "./Navbar";
 
 const style = { background: "#0092ff", padding: "8px 0" };
 const { Content } = Layout;
 const { Option } = Select;
-
-
 
 const SearchForm: React.FC = () => {
   const [query, setQuery] = useState<string>("");
@@ -23,7 +21,7 @@ const SearchForm: React.FC = () => {
   const [places, setPlaces] = useState<Array<any>>([{}]);
   const [searches, setSearches] = useState<Array<any>>([]); // for user searches
 
-  const key = "";
+  const key = "AIzaSyBoLPRkasVLr8uSZbZkgQZo8d_XbIKL0Us";
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -39,7 +37,7 @@ const SearchForm: React.FC = () => {
         setQuery(historyQuery.query);
         setLatitude(getLatitude);
         setLongitude(getLongitude);
-        // fetchSearchResults(historyQuery.query.split(" ").join("+"));
+        fetchSearchResults(historyQuery.query.split(" ").join("+"));
         console.log(historyQuery.query.split(" ").join("+"));
       }
     });
@@ -68,16 +66,13 @@ const SearchForm: React.FC = () => {
     setQuery(e.target.value as string);
     console.log(e.target.value);
     delayedSearchResult(e.target.value);
-
-    // fetchSearchResults(e.target.value.split(" ").join("+"));
+    fetchSearchResults(e.target.value.split(" ").join("+"));
   };
-
 
   const handleRadius = (e: any) => {
     setRadius(e);
     console.log(e);
   };
-
 
   //Fetch search results
   const fetchSearchResults = (query: string) => {
@@ -112,7 +107,6 @@ const SearchForm: React.FC = () => {
   });
   return (
     <div>
-      <Navbar/>
       <Content style={{ padding: "0 50px" }}>
         <Row style={{ justifyContent: "center", padding: 24 }}>
           <Col>

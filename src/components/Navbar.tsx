@@ -16,9 +16,6 @@ const Navbar: React.FC = () => {
             <Link to="/">Find Hospitals</Link>
           </Menu.Item>
           <Menu.Item key="2" style={{ float: "right", fontSize: "1.25em" }}>
-            <Link to="/history">Search History</Link>
-          </Menu.Item>
-          <Menu.Item key="2" style={{ float: "right", fontSize: "1.25em" }}>
             <Button
               onClick={() => {
                 auth.signOut();
@@ -26,6 +23,9 @@ const Navbar: React.FC = () => {
             >
               Logout
             </Button>
+          </Menu.Item>
+          <Menu.Item key="2" style={{ float: "right", fontSize: "1.25em" }}>
+            <Link to="/history">Search History</Link>
           </Menu.Item>
         </Menu>
       </Header>

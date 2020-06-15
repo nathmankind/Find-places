@@ -45,11 +45,12 @@ const SignIn: React.FC = () => {
     },
   };
 
-  // useEffect(() => {
-  //   const c_user = auth.currentUser;
-  //   setUser(c_user);
-  //   renderRedirect();
-  // }, []);
+  useEffect(() => {
+    const c_user = auth.currentUser;
+    setUser(c_user);
+    if(user != null){renderRedirect();}
+    
+  }, []);
 
   const onEmailHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -67,13 +68,13 @@ const SignIn: React.FC = () => {
     // email: string,
     // password: string
   ): void => {
-    e.preventDefault();
     console.log(email, password);
     auth.signInWithEmailAndPassword(email, password).catch((error) => {
       setError("Error signing in with password and email!");
       console.error("Error signing in with password and email", error);
       setUserLoggedIn(true);
     });
+    renderRedirect();
   };
   const renderRedirect = () => {
     if (userLoggedIn) {
@@ -85,19 +86,21 @@ const SignIn: React.FC = () => {
       {renderRedirect()}
       <Navbar />
       <Content style={{ padding: "0 50px" }}>
-        <Row>
+        <Row
+          style={{
+            width: "70%",
+            margin: "auto",
+            padding: 32,
+          }}
+        >
           <Col xs={24} sm={24} md={24} lg={24} xl={24}>
             <div className="heading">
-              <h3>Sign In</h3>
+              <h2>Sign In</h2>
             </div>
             <Form
               {...formItemLayout}
               form={form}
               name="register"
-              initialValues={{
-                residence: ["zhejiang", "hangzhou", "xihu"],
-                prefix: "86",
-              }}
               scrollToFirstError
             >
               <Form.Item
@@ -132,6 +135,7 @@ const SignIn: React.FC = () => {
               </Form.Item>
 
               <Form.Item {...tailFormItemLayout}>
+                <Link to="/">
                 <Button
                   // onClick={(e) => {
                   //   signInWithEmailAndPasswordHandler(e, email, password);
@@ -142,6 +146,7 @@ const SignIn: React.FC = () => {
                 >
                   Sign In
                 </Button>
+                </Link>
               </Form.Item>
             </Form>
             <p>

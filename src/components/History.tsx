@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { firestore, auth } from "./../Service/firebase";
 import { Row, Col, List, Layout, Spin, Space } from "antd";
 import Navbar from "./Navbar";
-const { Content, } = Layout;
+const { Content } = Layout;
 
 const History: React.FC = () => {
   const [qsearches, setQsearhes] = useState<Array<any>>([]);
@@ -13,8 +13,7 @@ const History: React.FC = () => {
       const db = firestore;
       const user: any = auth.currentUser;
       const user_id = user.uid;
-      const searchR = db
-        .collection("users")
+      db.collection("users")
         .doc(user_id)
         .onSnapshot((data) => {
           console.log(data.data());
@@ -30,9 +29,7 @@ const History: React.FC = () => {
   const searchHistory = qsearches.map((list) => {
     return (
       <div>
-        <li
-          key={list}
-        >
+        <li key={list}>
           <Link
             to={{
               pathname: "/",
@@ -61,6 +58,9 @@ const History: React.FC = () => {
       </Content>
       <Content style={{ padding: "0 50px" }}>
         <Row style={{ padding: 24 }} className="history-list">
+          {qsearches == []&&(
+            <div><p>No search results</p></div>
+          )}
           {qsearches ? (
             <ul>{searchHistory}</ul>
           ) : (
